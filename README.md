@@ -29,6 +29,13 @@ pip install -r requirements-dev.txt
 使用 `pre-commit`做代码风格检查
 
 ```bash
+# 安装1次
+pip install pre-commit
+pre-commit install
+```
+
+```bash
+# 手动触发check
 pre-commit run --all-files
 git diff   # 确认无自动修改残留
 # 手动添加文件修改
