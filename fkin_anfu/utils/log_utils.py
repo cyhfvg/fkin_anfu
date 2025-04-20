@@ -10,10 +10,12 @@
 @date: 2025/04/20
 """
 
-from threading import Lock
 import logging
-from typing import Callable, Tuple, Dict
-from colorama import Fore, Style, init as colorama_init
+from threading import Lock
+from typing import Callable, Dict, Tuple
+
+from colorama import Fore, Style
+from colorama import init as colorama_init
 
 # 初始化 colorama 自动复位颜色
 colorama_init(autoreset=True)
@@ -22,9 +24,9 @@ colorama_init(autoreset=True)
 _log_lock = Lock()
 
 # 日志配置
-logging.basicConfig(level=logging.DEBUG,
-                    format="%(asctime)s - %(levelname)s - %(message)s",
-                    handlers=[logging.StreamHandler()])
+logging.basicConfig(
+    level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s", handlers=[logging.StreamHandler()]
+)
 
 logger = logging.getLogger(__name__)
 # 不希望日志冒泡到父 logger，防止重复输出log
