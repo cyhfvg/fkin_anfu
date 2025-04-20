@@ -19,26 +19,33 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install dependencies
+      - name: Install dependencies (runtime + dev)
         run: |
           python -m pip install --upgrade pip
           pip install pip-tools
+
+          # 编译运行依赖（若有 requirements.in）
+          if [ -f requirements.in ]; then
+            pip-compile requirements.in --output-file=requirements.txt
+            pip install -r requirements.txt
+          fi
+
+          # 编译开发依赖
           pip-compile requirements-dev.in --output-file=requirements-dev.txt
           pip install -r requirements-dev.txt
-          pip install pytest flake8
 
-      - name: Run isort import order check
+      - name: Run isort (import order check)
         run: |
           isort --check-only fkin_anfu/ tests/
 
-      - name: Run black code format check
+      - name: Run black (code format check)
         run: |
           black --check fkin_anfu/ tests/
 
-      - name: Run flake8 style check
+      - name: Run flake8 (code style check)
         run: |
           flake8 fkin_anfu/ tests/
 
-      - name: Run tests
+      - name: Run unit tests (pytest)
         run: |
           pytest tests/ --disable-warnings
