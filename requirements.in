@@ -1,0 +1,6 @@
+pandas
+sqlalchemy
+pymysql
+openpyxl
+python-dotenv
+colorama
