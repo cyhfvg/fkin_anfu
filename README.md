@@ -23,3 +23,15 @@ pip-compile requirements-dev.in --output-file=requirements-dev.txt
 pip install -r requirements.txt
 pip install -r requirements-dev.txt
 ```
+
+## 提交代码
+
+使用 `pre-commit`做代码风格检查
+
+```bash
+pre-commit run --all-files
+git diff   # 确认无自动修改残留
+# 手动添加文件修改
+git add .
+git commit -m "fix(XXXX): code quality passed by pre-commit"
+```
