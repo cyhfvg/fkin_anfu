@@ -63,10 +63,10 @@ def get_parent_directory(file_path: Union[Path, str]) -> Optional[Path]:
     获取文件或目录的父目录路径。
 
     :param file_path: 文件或目录的路径字符串
-    :return: 父目录的路径，返回一个 Path 对象，如果路径无父目录，则返回 None
+    :return: 父目录的路径，返回一个 Path 对象，如果路径无父目录，则返回 './'
     """
     parent = Path(file_path).parent
-    return parent if parent != Path(file_path) else None
+    return parent if parent != Path(file_path) else Path('./')
 
 
 def create_directory(path: Union[Path, str]) -> None:

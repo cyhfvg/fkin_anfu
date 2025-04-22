@@ -79,7 +79,7 @@ def test_get_parent_directory():
         - 测试文件路径无父目录的情况
     """
     assert get_parent_directory("folder/subfolder/test.txt") == Path("folder/subfolder")
-    assert get_parent_directory("test.txt") is None
+    assert get_parent_directory("test.txt") == Path('./')
 
 
 def test_create_directory():
