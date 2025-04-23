@@ -3,5 +3,6 @@
   "[python]": {
     "editor.formatOnSave": false,
     "editor.defaultFormatter": null
-  }
+  },
+  "pylint.args": ["--max-line-length=120"]
 }

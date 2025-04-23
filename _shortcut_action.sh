@@ -29,7 +29,8 @@ else
 fi
 
 echo "[STEP] running pytest..."
-if pytest tests/ --disable-warnings; then
+# --disable-warnings
+if pytest tests/ ; then
   echo "[OK] pytest passed"
 else
   echo "[FAIL] pytest failed"
