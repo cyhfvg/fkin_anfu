@@ -11,6 +11,8 @@
 """
 from pathlib import Path
 
+import pytest
+
 from fkin_anfu.utils.path_utils import (
     create_directory,
     get_file_extension,
@@ -20,6 +22,19 @@ from fkin_anfu.utils.path_utils import (
     is_path_exists,
     join_paths,
 )
+
+
+@pytest.fixture(scope="function", autouse=True)
+def clean_up_directory():
+    """
+    测试前清理目录，确保测试环境的一致性。
+    """
+    test_dir = Path("new_folder")
+    if test_dir.exists():
+        test_dir.rmdir()  # 删除目录
+    yield  # 执行测试
+    if test_dir.exists():
+        test_dir.rmdir()  # 清理测试结束后创建的目录
 
 
 def test_is_file():
