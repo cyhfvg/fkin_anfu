@@ -42,3 +42,10 @@ git diff   # 确认无自动修改残留
 git add .
 git commit -m "fix(XXXX): code quality passed by pre-commit"
 ```
+
+```bash
+# 手动执行test
+pytest
+
+pytest tests/utils/test_log_utils.py
+```
