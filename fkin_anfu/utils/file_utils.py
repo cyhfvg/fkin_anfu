@@ -16,6 +16,8 @@ import shutil
 from pathlib import Path
 from typing import List, Union
 
+__all__ = ['is_file_exists', 'read_file', 'write_file', 'append_to_file', 'copy_file', 'delete_file']
+
 
 def is_file_exists(file_path: Union[Path, str]) -> bool:
     """

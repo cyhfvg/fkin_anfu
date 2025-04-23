@@ -17,6 +17,8 @@ from typing import Callable, Dict, Tuple
 from colorama import Fore, Style
 from colorama import init as colorama_init
 
+__all__ = ['debug_print']
+
 # 初始化 colorama 自动复位颜色
 colorama_init(autoreset=True)
 
