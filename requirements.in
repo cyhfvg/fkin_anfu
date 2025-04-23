@@ -4,3 +4,4 @@ pymysql
 openpyxl
 python-dotenv
 colorama
+XlsxWriter
