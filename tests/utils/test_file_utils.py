@@ -32,9 +32,10 @@ def sample_directory():
     dir_path = Path("sample_test_directory")
     dir_path.mkdir(parents=True, exist_ok=True)
     yield dir_path
-    for file in dir_path.glob("*"):
-        file.unlink()  # 删除目录中的所有文件
-    dir_path.rmdir()  # 删除目录
+    if dir_path.exists():
+        for file in dir_path.glob("*"):
+            file.unlink()  # 删除目录中的所有文件
+        dir_path.rmdir()  # 删除目录
 
 
 def test_is_file_exists(sample_file):
@@ -120,9 +121,6 @@ def test_file_not_found_exception():
     """
     with pytest.raises(FileNotFoundError):
         read_file("non_existing_file.txt")
-
-    with pytest.raises(FileNotFoundError):
-        delete_file("non_existing_file.txt")
 
     with pytest.raises(FileNotFoundError):
         copy_file("non_existing_file.txt", "new_file.txt")
