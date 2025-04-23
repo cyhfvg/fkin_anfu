@@ -11,8 +11,9 @@ dependencies = [
     "sqlalchemy",
     "pymysql",
     "openpyxl",
+    "XlsxWriter",
     "python-dotenv",
-    "colorama"
+    "colorama",
 ]
 
 [project.optional-dependencies]
