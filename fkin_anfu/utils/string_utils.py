@@ -19,6 +19,8 @@ __all__ = [
     "normalize_spaces",
     "regex_match",
     "replace_wide_chars",
+    "replace_wide_chars_in_list",
+    "remove_all_whitespace_from_list",
 ]
 
 
