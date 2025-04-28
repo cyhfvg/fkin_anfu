@@ -25,22 +25,30 @@ colorama_init(autoreset=True)
 # 线程锁，保证日志打印不穿插
 _log_lock = Lock()
 
-# 日志配置
-logging.basicConfig(
-    level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s", handlers=[logging.StreamHandler()]
-)
-
-logger = logging.getLogger(__name__)
+# 创建一个独立的 logger（不会污染 root logger）
+logger = logging.getLogger("fkin_anfu_log_utils")
+logger.setLevel(logging.DEBUG)
 # 不希望日志冒泡到父 logger，防止重复输出log
 logger.propagate = False
 
-# 类型注解：日志方法 + color 字符串
+# 如果没有 handler，主动加上
+if not logger.handlers:
+    handler = logging.StreamHandler()
+    formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+
+# 默认 fallback
+_DEFAULT_LOG_FUNC = logger.info
+_DEFAULT_COLOR = Fore.CYAN
+
+# 日志等级映射
 _LEVEL_MAP: Dict[str, Tuple[Callable[[str], None], str]] = {
-    "debug": (logging.getLogger(__name__).debug, Fore.BLUE),
-    "info": (logging.getLogger(__name__).info, Fore.CYAN),
-    "success": (logging.getLogger(__name__).info, Fore.GREEN),
-    "warning": (logging.getLogger(__name__).warning, Fore.YELLOW),
-    "error": (logging.getLogger(__name__).error, Fore.RED),
+    "debug": (logger.debug, Fore.BLUE),
+    "info": (logger.info, Fore.CYAN),
+    "success": (logger.info, Fore.GREEN),
+    "warning": (logger.warning, Fore.YELLOW),
+    "error": (logger.error, Fore.RED),
 }
 
 
@@ -52,7 +60,7 @@ def debug_print(level: str, msg: str) -> None:
     :param msg: 要输出的信息内容
     """
     level = level.lower()
-    log_func, color = _LEVEL_MAP.get(level, (logger.info, Fore.CYAN))
+    log_func, color = _LEVEL_MAP.get(level, (_DEFAULT_LOG_FUNC, _DEFAULT_COLOR))
     tag = f"{color}[{level.upper()}]{Style.RESET_ALL}"
 
     with _log_lock:
