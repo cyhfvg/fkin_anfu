@@ -15,7 +15,9 @@ from fkin_anfu.utils.string_utils import (
     normalize_spaces,
     regex_match,
     remove_all_whitespace,
+    remove_all_whitespace_from_list,
     replace_wide_chars,
+    replace_wide_chars_in_list,
     split_and_strip,
 )
 
@@ -66,3 +68,53 @@ def test_replace_wide_chars():
     assert replace_wide_chars("你好，世界。") == "你好,世界."
     assert replace_wide_chars("【测试】《标题》。") == "[测试]<标题>."
     assert replace_wide_chars("【测试】《标题》。", exclude=["【", "】"]) == "【测试】<标题>."
+
+
+# 测试 replace_wide_chars_in_list 方法
+def test_replace_wide_chars_in_list():
+    """
+    测试基本的宽字符替换
+    """
+    input_data = ["你好，世界。", "【示例】《标题》。"]
+    expected_output = ['你好,世界.', '[示例]<标题>.']
+    assert replace_wide_chars_in_list(input_data) == expected_output
+
+    # 测试排除指定字符不替换
+    input_data = ["【示例】《标题》。"]
+    expected_output = ['【示例】<标题>.']
+    assert replace_wide_chars_in_list(input_data, exclude=["【", "】"]) == expected_output
+
+    # 测试空列表
+    input_data = []
+    expected_output = []
+    assert replace_wide_chars_in_list(input_data) == expected_output
+
+    # 测试单个字符串
+    input_data = ["你好，世界！"]
+    expected_output = ['你好,世界!']
+    assert replace_wide_chars_in_list(input_data) == expected_output
+
+
+# 测试 remove_all_whitespace_from_list 方法
+def test_remove_all_whitespace_from_list():
+    """
+    测试基本的空白字符移除
+    """
+    input_data = ["a b\tc\n", " d e f "]
+    expected_output = ['abc', 'def']
+    assert remove_all_whitespace_from_list(input_data) == expected_output
+
+    # 测试空列表
+    input_data = []
+    expected_output = []
+    assert remove_all_whitespace_from_list(input_data) == expected_output
+
+    # 测试单个字符串
+    input_data = ["  a b c  "]
+    expected_output = ['abc']
+    assert remove_all_whitespace_from_list(input_data) == expected_output
+
+    # 测试带有多种空白字符的情况
+    input_data = ["a b\tc\n", "  d e f  "]
+    expected_output = ['abc', 'def']
+    assert remove_all_whitespace_from_list(input_data) == expected_output

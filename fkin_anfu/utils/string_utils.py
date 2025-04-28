@@ -54,6 +54,20 @@ def remove_all_whitespace(s: str) -> str:
     return re.sub(r"\s+", "", s)
 
 
+def remove_all_whitespace_from_list(strings: List[str]) -> List[str]:
+    """
+    移除列表中每个字符串元素的所有空白字符(空格、Tab、换行等)
+
+    :param strings: 包含多个字符串的列表
+    :return: 每个字符串元素的空白字符被移除后的新列表
+
+    示例：
+        >>> remove_all_whitespace_from_list(["a b\tc\n", " d e f "])
+        ['abc', 'def']
+    """
+    return [remove_all_whitespace(s) for s in strings]
+
+
 def split_and_strip(s: str, sep: str = ",") -> List[str]:
     """
     按分隔符切分字符串，并对每个子项去除首尾空白字符
@@ -166,3 +180,18 @@ def replace_wide_chars(s: str, exclude: Optional[List[str]] = None) -> str:
         s = s.replace(wide_char, ascii_char)
 
     return s
+
+
+def replace_wide_chars_in_list(strings: List[str], exclude: Optional[List[str]] = None) -> List[str]:
+    """
+    替换列表中每个字符串的常见中文宽字符标点为半角英文标点，支持白名单排除
+
+    :param strings: 包含多个字符串的列表
+    :param exclude: 不参与替换的字符列表，默认为空（全部替换）
+    :return: 每个字符串元素的宽字符标点被替换后的新列表
+
+    示例：
+        >>> replace_wide_chars_in_list(["你好，世界。", "【示例】《标题》。"])
+        ['你好,世界.', '[示例]<标题>.']
+    """
+    return [replace_wide_chars(s, exclude) for s in strings]
