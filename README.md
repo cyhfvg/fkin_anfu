@@ -49,3 +49,18 @@ pytest
 
 pytest tests/utils/test_log_utils.py
 ```
+
+## build pip 包
+
+```bash
+# 安装build、package工具,只需要安装一次
+pip install build twine
+```
+
+```bash
+# 确保清理旧的构建缓存
+rm -rf dist/ build/ *.egg-info
+
+# 执行build
+python -m build
+```
