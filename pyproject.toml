@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "Network Security Automation Toolkit"
 authors = [{ name = "cyhfvg", email = "public.guangzhou.zhang@outlook.com" }]
 readme = "README.md"
+license = {file = "LICENSE"}
 requires-python = ">=3.8"
 
 dependencies = [
@@ -47,3 +48,6 @@ ignore = "E203,W503"
 [build-system]
 requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[project.urls]
+Homepage = "https://github.com/cyhfvg/fkin_anfu"
