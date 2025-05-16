@@ -26,7 +26,7 @@ pip install -r requirements-dev.txt
 
 ## 提交代码
 
-使用 `pre-commit`做代码风格检查
+使用`pre-commit`做代码风格检查， 已封装为`_shortcut_action.sh`简便执行；
 
 ```bash
 # 安装1次
