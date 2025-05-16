@@ -64,3 +64,20 @@ rm -rf dist/ build/ *.egg-info
 # 执行build
 python -m build
 ```
+
+## 上传pip包
+
+```bash
+先创建PyPi的配置文件,提供API_TOKEN,只需提供一次
+touch ~/.pypirc
+
+#like this:
+[pypi]
+  username = __token__
+  password = pypi-Abcd....p
+```
+
+```bash
+# 正式上传pip包
+python -m twine upload dist/*
+```
