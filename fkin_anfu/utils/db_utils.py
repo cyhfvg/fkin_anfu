@@ -171,3 +171,20 @@ def write_df_to_mysql(df: DataFrame, table_name: str, engine: Engine, overwrite:
     except SQLAlchemyError as why:
         debug_print("error", f"MySQL 写入失败:{why}")
         raise
+
+
+def execute_one_sql(engine: Engine, one_sql: str) -> None:
+    """
+    执行提供的单条 SQL 语句，使用 SQLAlchemy engine。
+
+    :param engine: SQLAlchemy Engine 对象
+    :param one_sql: 要执行的 SQL 语句（应为完整语句）
+    :raises RuntimeError: 执行失败时抛出异常
+    """
+    try:
+        with engine.begin() as conn:  # 自动 commit 或 rollback
+            conn.execute(text(one_sql))
+        debug_print("INFO", f"[execute_one_sql] 成功执行 SQL: {one_sql.strip()}")
+    except SQLAlchemyError as why:
+        debug_print("ERROR", f"[execute_one_sql] SQL 执行失败: {one_sql.strip()} | {why}")
+        raise RuntimeError(f"执行 SQL 失败: {one_sql.strip()}") from why
