@@ -50,6 +50,13 @@ pytest
 pytest tests/utils/test_log_utils.py
 ```
 
+```bash
+#维护VERSION与CHANGELOG
+cat fkin_anfu/__init__.py | grep -i '__version__'
+cat pyproject.toml | grep -i 'version'
+cat CHANGELOG.md
+```
+
 ## build pip 包
 
 ```bash
