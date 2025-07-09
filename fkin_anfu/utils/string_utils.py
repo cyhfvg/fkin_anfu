@@ -152,6 +152,7 @@ def replace_wide_chars(s: str, exclude: Optional[List[str]] = None) -> str:
         '【示例】<标题>.'
     """
     wide_map = {
+        "．": ".",
         "，": ",",
         "。": ".",
         "；": ";",
