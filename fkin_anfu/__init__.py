@@ -9,4 +9,4 @@ fkin_anfu init
 @author: cyhfvg
 @date: 2025/05/17
 """
-__version__ = "0.3.1"
+__version__ = "0.4.0"

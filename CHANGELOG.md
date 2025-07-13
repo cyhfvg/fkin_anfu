@@ -4,6 +4,14 @@ fkin_anfu: "Network Security Automation Toolkit"
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [0.4.0] - 2025-07-13
+
+### Added
+
+- 添加`parse`子命令；解析汇总漏洞扫描工具结果
+- 添加`afrog_parser`；劝解解析afrog扫描输出的`json`结果，并能尝试修复afrog输出时可能存在的文件末尾缺少`]`问题
+- `afrog_parser`: 能够输出汇总结果,支持`xlsx`与`json`输出格式
+
 ## [0.3.1] - 2025-07-09
 
 ### Fixed
