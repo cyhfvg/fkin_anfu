@@ -4,6 +4,12 @@ fkin_anfu: "Network Security Automation Toolkit"
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [0.4.2] - 2025-07-17
+
+### Added
+
+- 添加`fscan_parser`工具，解析fscan扫描结果，支持输出xlsx, json格式
+
 ## [0.4.1] - 2025-07-17
 
 ### Added
