@@ -4,6 +4,13 @@ fkin_anfu: "Network Security Automation Toolkit"
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [0.4.1] - 2025-07-17
+
+### Added
+
+- 添加`output_utils`工具，为输出提供统一工具，当前提供FindingResult类型的JSON与XLSX输出
+- 修改parse_cmd中FindingResult的输出为统一output_utils工具
+
 ## [0.4.0] - 2025-07-13
 
 ### Added

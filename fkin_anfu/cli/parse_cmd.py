@@ -10,14 +10,12 @@
 @date: 2025/07/12
 """
 import argparse
-import json
 from pathlib import Path
-
-import pandas as pd
 
 from fkin_anfu.common.enums import OutputType, ParseType
 from fkin_anfu.parsers.parse_manager import dispatch_parsers
 from fkin_anfu.utils.log_utils import debug_print
+from fkin_anfu.utils.output_utils import export_findings_to_excel, export_findings_to_json
 
 
 def register_parse_subcommand(subparsers: argparse._SubParsersAction) -> None:
@@ -75,21 +73,13 @@ def run_parse_command(args: argparse.Namespace) -> None:
     output_path = args.output_file
     output_type = args.output_type
 
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-
-    # 转换为结构化数据列表
-    dict_rows = [item.to_dict() for item in results]
-
-    # TODO: output
     try:
         if output_type == OutputType.JSON:
-            with output_path.open("w", encoding="utf-8") as f:
-                json.dump(dict_rows, f, indent=2, ensure_ascii=False)
+            export_findings_to_json(results, output_path)
             debug_print("INFO", f"[parse_cmd] 结果已保存为 JSON: {output_path}")
 
         elif output_type == OutputType.XLSX:
-            df = pd.DataFrame(dict_rows)
-            df.to_excel(output_path, index=False)
+            export_findings_to_excel(results, output_path)
             debug_print("INFO", f"[parse_cmd] 结果已保存为 Excel: {output_path}")
     except Exception as why:
         debug_print("ERROR", f"[parse_cmd] 输出结果失败: {why}")
