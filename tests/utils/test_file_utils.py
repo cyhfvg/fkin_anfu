@@ -13,7 +13,15 @@ from pathlib import Path
 
 import pytest
 
-from fkin_anfu.utils.file_utils import append_to_file, copy_file, delete_file, is_file_exists, read_file, write_file
+from fkin_anfu.utils.file_utils import (
+    append_to_file,
+    copy_file,
+    delete_file,
+    is_file_exists,
+    read_file,
+    safe_read_lines,
+    write_file,
+)
 
 
 @pytest.fixture
@@ -36,6 +44,38 @@ def sample_directory():
         for file in dir_path.glob("*"):
             file.unlink()  # 删除目录中的所有文件
         dir_path.rmdir()  # 删除目录
+
+
+@pytest.fixture
+def utf8_file(tmp_path: Path) -> Path:
+    """
+    构造 UTF-8 编码的测试文件
+    """
+    content = ["第一行", "第二行", "第三行"]
+    file_path = tmp_path / "utf8.txt"
+    file_path.write_text("\n".join(content), encoding="utf-8")
+    return file_path
+
+
+@pytest.fixture
+def gbk_file(tmp_path: Path) -> Path:
+    """
+    构造 GBK 编码的测试文件
+    """
+    content = ["测试一行", "测试第二行"]
+    file_path = tmp_path / "gbk.txt"
+    file_path.write_text("\n".join(content), encoding="gbk")
+    return file_path
+
+
+@pytest.fixture
+def binary_file(tmp_path: Path) -> Path:
+    """
+    构造包含非法 UTF-8 字节的测试文件（模拟乱码或非文本文件）
+    """
+    file_path = tmp_path / "binary.txt"
+    file_path.write_bytes(b"\xff\xfe\nabc\n\xe4\xb8\xad\xe6\x96\x87\n")
+    return file_path
 
 
 def test_is_file_exists(sample_file):
@@ -124,3 +164,28 @@ def test_file_not_found_exception():
 
     with pytest.raises(FileNotFoundError):
         copy_file("non_existing_file.txt", "new_file.txt")
+
+
+def test_safe_read_lines_utf8(utf8_file: Path) -> None:
+    """
+    验证 safe_read_lines 能正确读取 UTF-8 编码文件
+    """
+    result = safe_read_lines(utf8_file)
+    assert result == ["第一行", "第二行", "第三行"]
+
+
+def test_safe_read_lines_gbk(gbk_file: Path) -> None:
+    """
+    验证 safe_read_lines 能在 UTF-8 解码失败时自动回退到 GBK 并成功读取内容
+    """
+    result = safe_read_lines(gbk_file)
+    assert result == ["测试一行", "测试第二行"]
+
+
+def test_safe_read_lines_binary(binary_file: Path) -> None:
+    """
+    验证 safe_read_lines 能容错处理非 UTF-8 合法字节流并返回部分可解析文本
+    """
+    result = safe_read_lines(binary_file)
+    assert isinstance(result, list)
+    assert any("abc" in line or "中文" in line for line in result)

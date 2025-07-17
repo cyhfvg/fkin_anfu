@@ -44,6 +44,22 @@ def read_file(file_path: Union[Path, str]) -> List[str]:
         return file.readlines()
 
 
+def safe_read_lines(path: Path) -> list[str]:
+    """
+    安全读取文本文件为行列表,自动处理编码(UTF-8优先,失败回退GBK)
+
+    Args:
+        path (Path): 文件路径
+
+    Returns:
+        list[str]: 按行拆分的字符串列表
+    """
+    try:
+        return path.read_text(encoding="utf-8").splitlines()
+    except UnicodeDecodeError:
+        return path.read_text(encoding="gbk", errors="ignore").splitlines()
+
+
 def write_file(file_path: Union[Path, str], content: List[str]) -> None:
     """
     将内容写入文件，每个列表元素作为文件中的一行。如果父目录不存在，则创建它。

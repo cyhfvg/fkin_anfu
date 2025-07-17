@@ -15,12 +15,14 @@ from typing import List, Tuple
 
 from fkin_anfu.common.enums import ParseType
 from fkin_anfu.parsers.afrog_parser import AfrogParser
+from fkin_anfu.parsers.fscan_parser import FscanParser
 from fkin_anfu.parsers.models.finding_result import FindingResult
 from fkin_anfu.utils.log_utils import debug_print
 
 # 工具名到解析器实例的映射表
 PARSER_REGISTRY = {
     "afrog": AfrogParser(),
+    "fscan": FscanParser(),
     # 可扩展添加更多工具解析器，如：
     # "nuclei": NucleiParser(),
     # "masscan": MasscanParser(),
@@ -56,6 +58,7 @@ def dispatch_parsers(
         filtered = [item for item in results if item.finding_type == parse_type.value]
 
         all_results.extend(filtered)
+        debug_print("INFO", f"[parse_manager] 共过滤筛选解析汇总 {parse_type.value} 信息 {len(all_results)} 条")
 
     if not all_results:
         debug_print("INFO", "[dispatch_parsers] 所有任务解析结果为空")

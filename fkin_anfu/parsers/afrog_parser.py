@@ -23,6 +23,8 @@ from fkin_anfu.parsers.base_parser import BaseParser
 from fkin_anfu.parsers.models.finding_result import FindingResult
 from fkin_anfu.utils.log_utils import debug_print
 
+__all__ = ["AfrogParser"]
+
 
 class AfrogParser(BaseParser):
     """
