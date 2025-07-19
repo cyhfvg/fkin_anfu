@@ -17,6 +17,7 @@ from fkin_anfu.common.enums import ParseType
 from fkin_anfu.parsers.afrog_parser import AfrogParser
 from fkin_anfu.parsers.fscan_parser import FscanParser
 from fkin_anfu.parsers.models.finding_result import FindingResult
+from fkin_anfu.utils.color_utils import YELLOW
 from fkin_anfu.utils.log_utils import debug_print
 
 # 工具名到解析器实例的映射表
@@ -59,10 +60,11 @@ def dispatch_parsers(
 
         all_results.extend(filtered)
         debug_print(
-            "INFO", f"[parse_manager] 过滤 {tool}:{path.name} 结果筛选解析 {parse_type.value} 信息 {len(filtered)} 条"
+            "INFO",
+            f"[parse_manager] 过滤 {tool}:{YELLOW(path.name)} 结果筛选解析 {parse_type.value} 信息 {YELLOW(len(filtered))} 条",
         )
 
-    debug_print("INFO", f"[parse_manager] 共过滤筛选解析汇总 {parse_type.value} 信息 {len(all_results)} 条")
+    debug_print("INFO", f"[parse_manager] 共过滤筛选解析汇总 {parse_type.value} 信息 {len(YELLOW(all_results))} 条")
 
     if not all_results:
         debug_print("INFO", "[dispatch_parsers] 所有任务解析结果为空")
