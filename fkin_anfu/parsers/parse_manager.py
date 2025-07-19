@@ -58,7 +58,11 @@ def dispatch_parsers(
         filtered = [item for item in results if item.finding_type == parse_type.value]
 
         all_results.extend(filtered)
-        debug_print("INFO", f"[parse_manager] 共过滤筛选解析汇总 {parse_type.value} 信息 {len(all_results)} 条")
+        debug_print(
+            "INFO", f"[parse_manager] 过滤 {tool}:{path.name} 结果筛选解析 {parse_type.value} 信息 {len(filtered)} 条"
+        )
+
+    debug_print("INFO", f"[parse_manager] 共过滤筛选解析汇总 {parse_type.value} 信息 {len(all_results)} 条")
 
     if not all_results:
         debug_print("INFO", "[dispatch_parsers] 所有任务解析结果为空")
