@@ -12,7 +12,7 @@
 import argparse
 from pathlib import Path
 
-from fkin_anfu.common.enums import OutputType, ParseType
+from fkin_anfu.common.enums import OutputType, ParseType, ScanTool
 from fkin_anfu.parsers.parse_manager import dispatch_parsers
 from fkin_anfu.utils.log_utils import debug_print
 from fkin_anfu.utils.output_utils import export_findings_to_excel, export_findings_to_json
@@ -25,9 +25,16 @@ def register_parse_subcommand(subparsers: argparse._SubParsersAction) -> None:
     Args:
         subparsers (argparse._SubParsersAction): 主命令的子命令注册器
     """
-    parser = subparsers.add_parser("parse", help="解析扫描结果并导出")
+    parser = subparsers.add_parser("parse", help="解析各扫描工具结果并导出")
 
-    parser.add_argument("--tool", required=True, action="append", help="扫描工具名称，如 afrog")
+    parser.add_argument(
+        "--tool",
+        required=True,
+        type=ScanTool,
+        action="append",
+        choices=list(ScanTool),
+        help="扫描工具名称。--tool,--path,--recursive为一组option,可以同时提供多组option供同时解析多处工具来源",
+    )
     parser.add_argument("--path", required=True, action="append", type=Path, help="扫描结果路径，文件或目录")
     parser.add_argument(
         "--recursive",

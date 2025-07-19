@@ -28,3 +28,15 @@ class OutputType(str, Enum):
 
     XLSX = "xlsx"  # 输出为 Excel 表格
     JSON = "json"  # 输出为 JSON 文件
+
+
+class ScanTool(str, Enum):
+    """
+    扫描工具类型
+    """
+
+    AFROG = "afrog"
+    FSCAN = "fscan"
+    # # 未来扩展：
+    # XRAY = "xray"
+    # NUCLEI = "nuclei"
