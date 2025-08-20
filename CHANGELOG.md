@@ -4,6 +4,13 @@ fkin_anfu: "Network Security Automation Toolkit"
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [0.4.3] - 2025-08-20
+
+### Added
+
+- 添加`color_utils`工具类，提供颜色化字符串方法
+- 重构`log_utils`
+
 ## [0.4.2] - 2025-07-17
 
 ### Added
