@@ -142,7 +142,7 @@ class AfrogParser(BaseParser):
 
                     # TODO: finding_type: vuln , asset 需要更准确划分
                     finding_type = ParseType.VULN.value
-                    if str.lower(severity) == 'info':
+                    if severity.lower() == 'info':
                         finding_type = ParseType.ASSET.value
                     else:
                         finding_type = ParseType.VULN.value

@@ -4,6 +4,14 @@ fkin_anfu: "Network Security Automation Toolkit"
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [0.4.4] - 2025-08-21
+
+### Fixed
+
+- 修复 fscan_parser 中 doc字符串显示错误
+- 修复 afrog_parser 中 str.lower()方法调用
+- 修复 parse_manager 中 颜色序列对字符串处理方法调用位置
+
 ## [0.4.3] - 2025-08-20
 
 ### Added

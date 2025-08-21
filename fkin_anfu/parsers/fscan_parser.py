@@ -53,7 +53,7 @@ class FscanParser(BaseParser):
             for file in files:
                 results.extend(self._parse_file(file))
 
-        debug_print("INFO", f"[AfrogParser] 成功解析 {len(results)} 条记录")
+        debug_print("INFO", f"[FscanParser] 成功解析 {len(results)} 条记录")
 
         return results
 
