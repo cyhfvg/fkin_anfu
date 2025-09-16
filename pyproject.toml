@@ -1,6 +1,6 @@
 [project]
 name = "fkin_anfu"
-version = "0.4.4"
+version = "0.4.5"
 description = "Network Security Automation Toolkit"
 authors = [{ name = "cyhfvg", email = "public.guangzhou.zhang@outlook.com" }]
 readme = "README.md"

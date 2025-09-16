@@ -4,6 +4,12 @@ fkin_anfu: "Network Security Automation Toolkit"
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [0.4.5] - 2025-09-16
+
+### Added
+
+- 添加ip_utils中`omni_extend_ip_list`,`parse_ip_range`函数对ip范围'127.0.0.1-5'格式支持
+
 ## [0.4.4] - 2025-08-21
 
 ### Fixed

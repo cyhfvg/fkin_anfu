@@ -120,34 +120,73 @@ def normalize_ipv4_string(ip: str) -> str:
 
 def parse_ip_range(ip_range: str) -> list[str]:
     """
-    解析形如 '127.0.0.1-127.0.0.5' 的 IP 范围为 IP 列表。
+    解析 IP 范围字符串，支持两种格式:
+    1) 'A.B.C.X-A.B.C.Y' 完整 IP 到完整 IP.
+    2) 'A.B.C.X-Y'      同一 C 段内，右侧仅给出末段 Y.
 
     Args:
-        ip_range (str): IP 范围字符串，使用连字符连接
+        ip_range (str): IP 范围字符串，使用连字符连接.
 
     Returns:
-        list[str]: 展开后的 IP 列表；若非法则返回空列表
+        list[str]: 展开后的 IP 列表; 若非法则返回空列表.
     """
-    if "-" not in ip_range:
-        if is_valid_ipv4(ip_range):
-            return [ip_range]
+    s = (ip_range or "").strip()
+    if not s:
         return []
 
-    start_ip, end_ip = ip_range.split("-", 1)
-    try:
-        start = ipaddress.IPv4Address(start_ip.strip())
-        end = ipaddress.IPv4Address(end_ip.strip())
-        if int(start) > int(end):
-            return []
-        return [str(ipaddress.IPv4Address(ip)) for ip in range(int(start), int(end) + 1)]
-    except Exception as why:
-        debug_print("DEBUG", f"[parse_ip_range] invalid input: {ip_range}, reason: {why}")
+    # 不含连字符时，当作单个 IP 校验
+    if "-" not in s:
+        return [s] if is_valid_ipv4(s) else []
+
+    left, right = [p.strip() for p in s.split("-", 1)]
+
+    # 左侧必须是合法 IPv4
+    if not is_valid_ipv4(left):
+        debug_print("DEBUG", f"[parse_ip_range] invalid left side: {left}")
         return []
+
+    # 情况 1: 右侧也是完整 IPv4
+    if is_valid_ipv4(right):
+        try:
+            start = ipaddress.IPv4Address(left)
+            end = ipaddress.IPv4Address(right)
+            if int(start) > int(end):
+                debug_print("DEBUG", f"[parse_ip_range] start > end: {left} > {right}")
+                return []
+            return [str(ipaddress.IPv4Address(i)) for i in range(int(start), int(end) + 1)]
+        except Exception as e:
+            debug_print("DEBUG", f"[parse_ip_range] invalid range: {ip_range}, reason: {e}")
+            return []
+
+    # 情况 2: 右侧仅为末段 octet 数字
+    m = re.fullmatch(r"\d{1,3}", right)
+    if m:
+        try:
+            end_octet = int(m.group(0))
+            if not (0 <= end_octet <= 255):
+                debug_print("DEBUG", f"[parse_ip_range] end octet out of range: {end_octet}")
+                return []
+            a, b, c, d = (int(x) for x in left.split("."))
+            if end_octet < d:
+                debug_print("DEBUG", f"[parse_ip_range] end octet < start octet: {d} -> {end_octet}")
+                return []
+            end_ip = f"{a}.{b}.{c}.{end_octet}"
+            start = ipaddress.IPv4Address(left)
+            end = ipaddress.IPv4Address(end_ip)
+            return [str(ipaddress.IPv4Address(i)) for i in range(int(start), int(end) + 1)]
+        except Exception as e:
+            debug_print("DEBUG", f"[parse_ip_range] invalid shorthand: {ip_range}, reason: {e}")
+            return []
+
+    # 右侧既不是完整 IPv4, 也不是合法的末段数字
+    debug_print("DEBUG", f"[parse_ip_range] invalid right side: {right}")
+    return []
 
 
 def omni_extend_ip_list(ip_orig: str) -> list[str]:
     """
     自动识别 IP 字符串类型(CIDR / 范围 / 单个)并展开为列表。
+    ip范围支持 '127.0.0.1-127.0.0.5'或'127.0.0.1-5'
 
     Args:
         ip_orig (str): 原始 IP 输入字符串
