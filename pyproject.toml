@@ -1,6 +1,6 @@
 [project]
 name = "fkin_anfu"
-version = "0.4.5"
+version = "0.4.6"
 description = "Network Security Automation Toolkit"
 authors = [{ name = "cyhfvg", email = "public.guangzhou.zhang@outlook.com" }]
 readme = "README.md"
@@ -15,7 +15,8 @@ dependencies = [
     "XlsxWriter",
     "python-dotenv",
     "colorama",
-    "pydantic"
+    "pydantic",
+    "pyfiglet"
 ]
 
 [project.optional-dependencies]
@@ -39,7 +40,7 @@ skip-string-normalization = true
 profile = "black"
 line_length = 120
 known_first_party = "fkin_anfu"
-known_third_party = ["pandas", "sqlalchemy", "pymysql", "openpyxl", "colorama"]
+known_third_party = ["pandas", "sqlalchemy", "pymysql", "openpyxl", "colorama", "pyfiglet"]
 skip = [".venv", "__pycache__"]
 
 [tool.flake8]

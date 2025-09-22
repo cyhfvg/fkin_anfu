@@ -4,6 +4,13 @@ fkin_anfu: "Network Security Automation Toolkit"
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [0.4.6] - 2025-09-16
+
+### Added
+
+- 在`log_utils`中添加`print_ascii`方法用于输出艺术字
+- 移除`ip_utils`中`is_valid_ipv4`方法中的日志输出
+
 ## [0.4.5] - 2025-09-16
 
 ### Added

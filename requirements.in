@@ -6,3 +6,4 @@ python-dotenv
 colorama
 XlsxWriter
 pydantic
+pyfiglet

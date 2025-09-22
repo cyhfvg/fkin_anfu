@@ -48,8 +48,7 @@ def is_valid_ipv4(ip: str) -> bool:
     try:
         ipaddress.IPv4Address(ip)
         return True
-    except Exception as why:
-        debug_print("DEBUG", f"[is_valid_ipv4] invalid ip: {ip}, reason: {why}")
+    except Exception:
         return False
 
 
