@@ -4,6 +4,12 @@ fkin_anfu: "Network Security Automation Toolkit"
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [0.5.1] - 2025-10-22
+
+### Added
+
+- 为`log_utils`的`debug_print(level: str, msg: str)`将msg更改为`Any`类型，避免IDE类型检查报警告
+
 ## [0.5.0] - 2025-10-22
 
 ### Added

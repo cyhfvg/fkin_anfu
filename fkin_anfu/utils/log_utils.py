@@ -14,7 +14,7 @@ import logging
 import random
 import shutil
 from threading import Lock
-from typing import Callable, Dict, Literal, Tuple, Union
+from typing import Any, Callable, Dict, Literal, Tuple, Union
 
 from colorama import Style
 from pyfiglet import Figlet
@@ -53,7 +53,7 @@ _LEVEL_MAP: Dict[str, Tuple[Callable[[str], None], Callable[[str], str]]] = {
 }
 
 
-def debug_print(level: str, msg: str) -> None:
+def debug_print(level: str, msg: Any) -> None:
     """
     线程安全的统一日志输出接口，支持彩色控制台输出。
 
@@ -65,7 +65,7 @@ def debug_print(level: str, msg: str) -> None:
     tag = color_func(f"[{level.upper()}]")
 
     with _log_lock:
-        log_func(f"{tag} {msg}")
+        log_func(f"{tag} {str(msg)}")
 
 
 def print_ascii(
