@@ -48,7 +48,7 @@ class FscanParser(BaseParser):
         if path.is_file():
             results.extend(self._parse_file(path))
         elif path.is_dir():
-            files = path.rglob("*.txt") if recursive else path.glob("*.txt")
+            files = list(path.rglob("*.txt") if recursive else path.glob("*.txt"))
             debug_print("INFO", f"[FscanParser] 发现 {len(files)} 个文件待解析")
             for file in files:
                 results.extend(self._parse_file(file))

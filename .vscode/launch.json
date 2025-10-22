@@ -1,0 +1,22 @@
+{
+  "version": "0.1.0",
+  "configurations": [
+    {
+      "name": "Debug fkin-anfu parse 子命令",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/fkin_anfu/cli/main.py",
+      "args": [
+        "parse",
+        "--tool", "fscan",
+        "--path", "/path/to/fscan_scan_result_dir",
+        "--recursive", "False",
+        "--type", "vuln",
+        "--output-type", "xlsx",
+        "--output-file", "/path/to/output.xlsx"
+      ],
+      "console": "integratedTerminal",
+      "justMyCode": false
+    }
+  ]
+}

@@ -44,3 +44,7 @@ def main() -> None:
             sys.exit(1)
     else:
         parser.print_help()
+
+
+if __name__ == "__main__":
+    main()

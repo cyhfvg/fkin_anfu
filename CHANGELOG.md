@@ -4,6 +4,14 @@ fkin_anfu: "Network Security Automation Toolkit"
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [0.4.7] - 2025-10-22
+
+### Fixed
+
+- 在`fkin-anfu/cli/main.py`中补充`if __name__ == "__main__"`入口调用，允许直接运行
+`main.py`脚本启动程序
+- 修复`fscan_parser`对目录的读取错误
+
 ## [0.4.6] - 2025-09-16
 
 ### Added
