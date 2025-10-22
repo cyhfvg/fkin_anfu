@@ -14,6 +14,7 @@
 import pytest
 
 from fkin_anfu.utils.ip_utils import (
+    batch_omni_extend_ip_list,
     extract_ipv4s_from_text,
     find_continuous_ranges,
     format_ip_range,
@@ -144,3 +145,42 @@ def test_format_ip_range(start_ip: str, end_last: int, expected: str):
 def test_shrink_ip_list(ip_list: list[str], expected: list[str]):
     """参数化测试 shrink_ip_list 是否能将 IP 合并成范围"""
     assert shrink_ip_list(ip_list) == expected
+
+
+def test_single_cidr():
+    """测试单个 CIDR 展开"""
+    result = batch_omni_extend_ip_list("192.168.1.0/30")
+    assert result == ["192.168.1.1", "192.168.1.2"], "CIDR 段展开失败"
+
+
+def test_single_range_full():
+    """测试完整 IP 范围"""
+    result = batch_omni_extend_ip_list("192.168.1.1-192.168.1.3")
+    assert result == ["192.168.1.1", "192.168.1.2", "192.168.1.3"], "IP 范围解析失败"
+
+
+def test_single_range_short():
+    """测试简写 IP 范围"""
+    result = batch_omni_extend_ip_list("192.168.1.1-3")
+    assert result == ["192.168.1.1", "192.168.1.2", "192.168.1.3"], "简写范围解析失败"
+
+
+def test_single_ip():
+    """测试单个 IPv4"""
+    result = batch_omni_extend_ip_list("192.168.1.10")
+    assert result == ["192.168.1.10"], "单个 IP 解析失败"
+
+
+def test_list_mixed_input():
+    """测试混合输入列表"""
+    data = ["10.0.0.1-2", "10.0.0.5", "10.0.0.0/30"]
+    result = batch_omni_extend_ip_list(data)
+    # 展开后去重排序检查结果是否完整
+    assert set(result) == {"10.0.0.1", "10.0.0.2", "10.0.0.5", "10.0.0.1", "10.0.0.2"}, "混合输入解析不完整"
+
+
+def test_invalid_inputs():
+    """测试无效输入处理"""
+    data = ["", None, "abc.def.ghi.jkl"]
+    result = batch_omni_extend_ip_list(data)
+    assert result == [], "无效输入应返回空列表"

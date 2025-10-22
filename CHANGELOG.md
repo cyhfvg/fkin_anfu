@@ -4,6 +4,13 @@ fkin_anfu: "Network Security Automation Toolkit"
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [0.5.0] - 2025-10-22
+
+### Added
+
+- 为`ip_utils`的`omni_extend_ip_list`方法添加入参为`Union[str, list[str]]`混合类型的
+版本实现`batch_omni_extend_ip_list`，允许批量extend_ip
+
 ## [0.4.7] - 2025-10-22
 
 ### Fixed

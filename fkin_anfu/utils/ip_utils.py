@@ -14,6 +14,7 @@ from __future__ import annotations
 import ipaddress
 import re
 from collections import defaultdict
+from typing import Union
 
 from fkin_anfu.utils.log_utils import debug_print
 from fkin_anfu.utils.string_utils import replace_wide_chars
@@ -29,6 +30,7 @@ __all__ = [
     "find_continuous_ranges",
     "format_ip_range",
     "shrink_ip_list",
+    "batch_omni_extend_ip_list",
 ]
 
 # 模块级 IP 正则表达式对象
@@ -286,4 +288,39 @@ def shrink_ip_list(ip_list: list[str]) -> list[str]:
             result.append(start)
         else:
             result.append(format_ip_range(start, int(end.split(".")[-1])))
+    return result
+
+
+def batch_omni_extend_ip_list(ips: Union[str, list[str]]) -> list[str]:
+    """
+    批量自动识别 IP 字符串类型(CIDR/范围/单个)并展开为 IP 列表。
+
+    支持以下格式：
+    - 单个 IPv4 地址: "192.168.1.1"
+    - CIDR 段: "192.168.1.0/30"
+    - IP 范围: "192.168.1.1-192.168.1.5" 或 "192.168.1.1-5"
+    - 混合输入列表: ["192.168.1.1-2", "10.0.0.1", "10.0.0.0/30"]
+
+    Args:
+        ips (Union[str, list[str]]): 单个 IP 字符串或字符串列表
+
+    Returns:
+        list[str]: 扁平化展开后的 IPv4 地址列表
+    """
+    ip_items = [ips] if isinstance(ips, str) else ips
+    result: list[str] = []
+
+    for ip_str in ip_items:
+        if not isinstance(ip_str, str) or not ip_str.strip():
+            debug_print("DEBUG", f"[batch_omni_extend_ip_list] 跳过空输入: {ip_str!r}")
+            continue
+        try:
+            expanded = omni_extend_ip_list(ip_str)
+            if not expanded:
+                debug_print("DEBUG", f"[batch_omni_extend_ip_list] 无法解析: {ip_str}")
+            else:
+                result.extend(expanded)
+        except Exception as why:
+            debug_print("ERROR", f"[batch_omni_extend_ip_list] 解析失败: {ip_str}, reason={why}")
+
     return result
