@@ -21,6 +21,8 @@
 @date: 2025/07/19
 """
 
+from typing import Any
+
 from colorama import Fore, Style, init
 
 # 自动适配 Windows 控制台颜色支持
@@ -40,7 +42,7 @@ _COLOR_MAP: dict[str, str] = {
 }
 
 
-def highlight_text(msg: str, color: str = "yellow", bold: bool = False) -> str:
+def highlight_text(msg: Any, color: str = "yellow", bold: bool = False) -> str:
     """
     对字符串添加颜色和加粗样式，支持 colorama 的标准色。
 
@@ -57,40 +59,40 @@ def highlight_text(msg: str, color: str = "yellow", bold: bool = False) -> str:
     """
     color_code: str = _COLOR_MAP.get(color.lower(), "")
     bold_code: str = Style.BRIGHT if bold else ""
-    return f"{bold_code}{color_code}{msg}{Style.RESET_ALL}"
+    return f"{bold_code}{color_code}{str(msg)}{Style.RESET_ALL}"
 
 
-def RED(msg: str) -> str:
+def RED(msg: Any) -> str:
     """将字符串渲染为红色"""
     return highlight_text(msg, color="red")
 
 
-def GREEN(msg: str) -> str:
+def GREEN(msg: Any) -> str:
     """将字符串渲染为绿色"""
     return highlight_text(msg, color="green")
 
 
-def YELLOW(msg: str) -> str:
+def YELLOW(msg: Any) -> str:
     """将字符串渲染为黄色"""
     return highlight_text(msg, color="yellow")
 
 
-def ORANGE(msg: str) -> str:
+def ORANGE(msg: Any) -> str:
     """将字符串渲染为橙色（使用 LIGHTRED 近似处理）"""
     return highlight_text(msg, color="orange")
 
 
-def BLUE(msg: str) -> str:
+def BLUE(msg: Any) -> str:
     """将字符串渲染为蓝色"""
     return highlight_text(msg, color="blue")
 
 
-def CYAN(msg: str) -> str:
+def CYAN(msg: Any) -> str:
     """将字符串渲染为青色"""
     return highlight_text(msg, color="cyan")
 
 
-def MAGENTA(msg: str) -> str:
+def MAGENTA(msg: Any) -> str:
     """将字符串渲染为洋红色"""
     return highlight_text(msg, color="magenta")
 
