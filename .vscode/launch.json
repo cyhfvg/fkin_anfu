@@ -2,18 +2,47 @@
   "version": "0.1.0",
   "configurations": [
     {
-      "name": "Debug fkin-anfu parse 子命令",
+      "name": "Debug fkin-anfu parse fscan result",
       "type": "debugpy",
       "request": "launch",
       "program": "${workspaceFolder}/fkin_anfu/cli/main.py",
       "args": [
         "parse",
-        "--tool", "fscan",
-        "--path", "/path/to/fscan_scan_result_dir",
-        "--recursive", "False",
-        "--type", "vuln",
-        "--output-type", "xlsx",
-        "--output-file", "/path/to/output.xlsx"
+        "--tool",
+        "fscan",
+        "--path",
+        "/path/to/fscan_scan_result_dir",
+        "--recursive",
+        "False",
+        "--type",
+        "vuln",
+        "--output-type",
+        "xlsx",
+        "--output-file",
+        "/path/to/output.xlsx"
+      ],
+      "console": "integratedTerminal",
+      "justMyCode": false
+    },
+    {
+      "name": "Debug fkin-anfu parse nuclei result",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/fkin_anfu/cli/main.py",
+      "args": [
+        "parse",
+        "--tool",
+        "nuclei",
+        "--path",
+        "./scripts/05-vuln-scan-nuclei/",
+        "--recursive",
+        "False",
+        "--type",
+        "vuln",
+        "--output-type",
+        "xlsx",
+        "--output-file",
+        "./scripts/20251024-nuclei-scan-result.xlsx"
       ],
       "console": "integratedTerminal",
       "justMyCode": false

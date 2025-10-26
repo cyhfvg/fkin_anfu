@@ -37,6 +37,7 @@ class ScanTool(str, Enum):
 
     AFROG = "afrog"
     FSCAN = "fscan"
+    NUCLEI = "nuclei"
     # # 未来扩展：
     # XRAY = "xray"
-    # NUCLEI = "nuclei"
+    # MASSCAN = "masscan"

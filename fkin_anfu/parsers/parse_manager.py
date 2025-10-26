@@ -13,19 +13,20 @@
 from pathlib import Path
 from typing import List, Tuple
 
-from fkin_anfu.common.enums import ParseType
+from fkin_anfu.common.enums import ParseType, ScanTool
 from fkin_anfu.parsers.afrog_parser import AfrogParser
 from fkin_anfu.parsers.fscan_parser import FscanParser
 from fkin_anfu.parsers.models.finding_result import FindingResult
+from fkin_anfu.parsers.nuclei_parser import NucleiParser
 from fkin_anfu.utils.color_utils import YELLOW
 from fkin_anfu.utils.log_utils import debug_print
 
 # 工具名到解析器实例的映射表
 PARSER_REGISTRY = {
-    "afrog": AfrogParser(),
-    "fscan": FscanParser(),
+    ScanTool.AFROG: AfrogParser(),
+    ScanTool.FSCAN: FscanParser(),
+    ScanTool.NUCLEI: NucleiParser(),
     # 可扩展添加更多工具解析器，如：
-    # "nuclei": NucleiParser(),
     # "masscan": MasscanParser(),
 }
 
@@ -47,7 +48,7 @@ def dispatch_parsers(
     all_results: List[FindingResult] = []
 
     for tool, path, recursive in task_list:
-        parser = PARSER_REGISTRY.get(tool)
+        parser = PARSER_REGISTRY.get(ScanTool(tool))
         if parser is None:
             raise ValueError(f"[dispatch_parsers] 不支持的工具类型: {tool}")
 
