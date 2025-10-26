@@ -1,0 +1,206 @@
+name: Release to PyPI & GitHub on Tag
+
+on:
+  push:
+    tags:
+      - "v*" # 仅在 vX.Y.Z 这样的 tag 推送时触发
+  workflow_dispatch: # 允许手动触发
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build-publish-release:
+    name: Build, Publish to PyPI, Create GitHub Release
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    permissions:
+      contents: write # 创建 Release 需要 write
+      id-token: write # 若未来改为 PyPI OIDC（Trusted Publishing）需要
+    env:
+      TAG_NAME: ${{ github.ref_name }} # e.g. v0.3.1
+      VERSION: ${{ github.ref_name || '' }} # 备用
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # 某些基于 VCS 的版本方案需要完整历史
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install build tooling
+        run: |
+          python -m pip install --upgrade "pip==25.2"
+          python -m pip install build twine
+
+      - name: Verify tag matches project.version (if static)
+        id: verchk
+        shell: bash
+        run: |
+          set -euo pipefail
+          TAG_RAW="${GITHUB_REF#refs/tags/}"  # v0.3.1
+          TAG="${TAG_RAW#v}"                  # 0.3.1
+          echo "tag=${TAG}" >> "${GITHUB_OUTPUT}"
+
+          python - << 'PY'
+          import os, sys, pathlib
+          tag = os.environ.get("TAG", "")
+          py = pathlib.Path("pyproject.toml")
+          if not py.exists():
+              print("No pyproject.toml, skip version check")
+              sys.exit(0)
+          try:
+              import tomllib  # Python 3.11+
+          except Exception:
+              print("No tomllib; skip version check", file=sys.stderr)
+              sys.exit(0)
+
+          data = tomllib.loads(py.read_text(encoding="utf-8"))
+          proj = data.get("project") or {}
+          version = proj.get("version")
+          dynamic = set(proj.get("dynamic") or [])
+          if version:
+              if version != tag:
+                  print(f"::error::Tag {tag} does not match project.version {version}", file=sys.stderr)
+                  sys.exit(1)
+              else:
+                  print(f"Tag {tag} matches project.version {version}")
+          else:
+              if "version" in dynamic:
+                  print("project.version is dynamic; skip version check")
+              else:
+                  print("project.version not found; skip version check")
+          PY
+        env:
+          TAG: ${{ github.ref_name }}
+
+      - name: Build sdist & wheel
+        run: |
+          python -m build --sdist --wheel --outdir dist/
+
+      - name: Twine check metadata
+        run: |
+          python -m twine check dist/*
+
+      # publish to PyPI {{{1
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_API_TOKEN }} # 在仓库 Settings -> Secrets 配置
+          skip-existing: true
+
+      # 可选：把构建产物也保存到 Actions artifact，便于调试或留档
+      - name: Upload dist as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-${{ github.ref_name }}
+          path: dist/*
+      # }}}
+
+      # GitHUB release {{{1
+      # 创建 GitHub Release，并把 dist/* 附件上传到该 Release
+      - name: Create GitHub Release & Upload assets
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }} # v0.3.1
+          name: ${{ github.ref_name }} # Release 名称显示为 v0.3.1
+          files: |
+            dist/*
+          generate_release_notes: true # 自动生成发布说明（基于近期变更）
+          draft: false
+          prerelease: ${{ contains(github.ref_name, '-') }} # 带有 rc/a/b 的 tag 视为预发布
+      - name: Build release notes from CHANGELOG.md (by tag)
+        shell: bash
+        run: |
+          set -euo pipefail
+          TAG="${GITHUB_REF_NAME#v}"  # 'v0.3.1' -> '0.3.1'
+
+          python - << 'PY'
+          # -*- coding: utf-8 -*-
+          """
+          从 CHANGELOG.md 中提取与当前版本(tag)对应的段落,输出到 RELEASE_BODY.md
+          兼容以下常见小节标题：
+            - '## 0.3.1'
+            - '## v0.3.1'
+            - '## [0.3.1]'
+            - '## [0.3.1] - 2025-10-26'
+          若找不到目标版本，则回退为整个 CHANGELOG.md(避免发布失败)
+          """
+          import io, os, re, sys
+
+          def read_text(path: str) -> str:
+            try:
+              with io.open(path, "r", encoding="utf-8") as f:
+                return f.read()
+            except Exception as why:
+              raise RuntimeError("failed to read {}".format(path)) from why
+
+          def write_text(path: str, content: str) -> None:
+            try:
+              with io.open(path, "w", encoding="utf-8") as f:
+                f.write(content)
+            except Exception as why:
+              raise RuntimeError("failed to write {}".format(path)) from why
+
+          def build_section_regex(version: str) -> re.Pattern:
+            # 目标标题匹配：## [v]version(可带中括号/可带日期）
+            # - 起始：^##\s*
+            # - 可选 '['
+            # - 可选 'v'
+            # - 版本号本体（转义）
+            # - 可选 ']'
+            # - 可选 ' - YYYY-MM-DD'
+            # - 直到段落结束（下一段 '## ' 或文件末尾）
+            v = re.escape(version)
+            pat = r"(?ms)^##\s*(?:\[\s*)?(?:v)?{v}(?:\s*\])?(?:\s*-\s*\d{{4}}-\d{{2}}-\d{{2}})?\s*\n(.*?)(?=^##\s+|\Z)".format(v=v)
+            return re.compile(pat)
+
+          def extract_for_version(changelog: str, version: str) -> str:
+            rx = build_section_regex(version)
+            m = rx.search(changelog)
+            if m:
+              body = m.group(0).strip()
+              # 可选：去掉标题行，只保留内容
+              # body = m.group(1).strip()
+              return body
+            # 尝试 'v' 前缀
+            rx_v = build_section_regex("v" + version)
+            m2 = rx_v.search(changelog)
+            if m2:
+              return m2.group(0).strip()
+            return ""  # 没找到
+
+          tag = os.environ.get("TAG", "").strip()
+          if not tag:
+            print("No TAG provided", file=sys.stderr)
+            sys.exit(1)
+
+          changelog = read_text("CHANGELOG.md")
+          body = extract_for_version(changelog, tag)
+          if not body:
+            # 找不到对应段落，回退整个文件，避免中断发布
+            body = changelog.strip()
+
+          write_text("RELEASE_BODY.md", body)
+          PY
+        env:
+          TAG: ${{ github.ref_name && startsWith(github.ref_name, 'v') && github.ref_name != '' && replace(github.ref_name, 'v', '') || github.ref_name }}
+
+      - name: Create GitHub Release & Upload assets
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }} # v0.3.1
+          name: ${{ github.ref_name }} # Release 名称显示为 v0.3.1
+          files: |
+            dist/*
+          draft: false
+          prerelease: ${{ contains(github.ref_name, '-') }}
+          body_path: RELEASE_BODY.md # 用我们刚提取的版本段落
+      # }}}
