@@ -17,6 +17,9 @@ from fkin_anfu.parsers.models.finding_result import FindingResult
 
 @pytest.fixture
 def parser() -> FscanParser:
+    """
+    parser fixture
+    """
     return FscanParser()
 
 
