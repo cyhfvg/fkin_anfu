@@ -33,7 +33,7 @@ def register_parse_subcommand(subparsers: argparse._SubParsersAction) -> None:
         type=ScanTool,
         action="append",
         choices=list(ScanTool),
-        help="扫描工具名称。--tool,--path,--recursive为一组option,可以同时提供多组option供同时解析多处工具来源",
+        help="扫描工具名称,[afrog, fscan, nuclei]。--tool,--path,--recursive为一组option,可以同时提供多组option供同时解析多处工具来源",
     )
     parser.add_argument("--path", required=True, action="append", type=Path, help="扫描结果路径，文件或目录")
     parser.add_argument(
@@ -41,15 +41,15 @@ def register_parse_subcommand(subparsers: argparse._SubParsersAction) -> None:
         required=True,
         action="append",
         type=lambda x: x.lower() == "true",
-        help="是否递归目录解析,True/False",
+        help="是否递归目录解析,[True,False]",
     )
     parser.add_argument(
-        "--type", required=True, type=ParseType, choices=list(ParseType), help="解析结果类型: vuln 或 asset"
+        "--type", required=True, type=ParseType, choices=list(ParseType), help="解析结果类型: [vuln, asset]"
+    )
+    parser.add_argument(
+        "--output-type", required=True, type=OutputType, choices=list(OutputType), help="输出类型: [xlsx, json]"
     )
     parser.add_argument("--output-file", required=True, type=Path, help="导出结果的目标文件路径")
-    parser.add_argument(
-        "--output-type", required=True, type=OutputType, choices=list(OutputType), help="输出类型: xlsx 或 json"
-    )
     parser.set_defaults(func=run_parse_command)
 
 

@@ -4,6 +4,12 @@ fkin_anfu: "Network Security Automation Toolkit"
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [0.6.2] - 2025-10-26
+
+### Fixed
+
+- 修改`help`文档，更人性化
+
 ## [0.6.1] - 2025-10-26
 
 ### Fixed
