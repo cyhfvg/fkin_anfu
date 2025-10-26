@@ -1,4 +1,4 @@
-name: Release to PyPI & GitHub on Tag
+name: RELEASE :PyPI, GitHub
 
 on:
   push:
